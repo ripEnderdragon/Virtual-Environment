@@ -1,5 +1,5 @@
 # Impor
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 
 app = Flask(__name__)
@@ -8,36 +8,28 @@ def result_calculate(size, lights, device):
     # Variabel yang memungkinkan penghitungan konsumsi energi peralatan
     home_coef = 100
     light_coef = 0.04
-    devices_coef = 5
-    return (lights * light_coef + device * devices_coef)/ size * home_coef 
+    devices_coef = 5   
+    return size * home_coef + lights * light_coef + device * devices_coef 
 
 # Halaman pertama
 @app.route('/')
 def index():
     return render_template('index.html')
-
 # Halaman kedua
 @app.route('/<size>')
 def lights(size):
     return render_template(
                             'lights.html', 
-                            size=size,
+                            size=size
                            )
 
 # Halaman ketiga
 @app.route('/<size>/<lights>')
 def electronics(size, lights):
     return render_template(
-                            'electronics.html',
+                            'electronics.html',                           
                             size = size, 
                             lights = lights                           
-                           )
-
-# Halaman keempat
-@app.route('/input')
-def input_1():
-    return render_template(
-                            'input.html',                         
                            )
 
 # Perhitungan
@@ -49,4 +41,21 @@ def end(size, lights, device):
                                                     int(device)
                                                     )
                         )
+# Formulir
+@app.route('/form')
+def form():
+    return render_template('form.html')
+
+#Hasil formulir
+@app.route('/submit', methods=['POST'])
+def submit_form():
+    # Mendeklarasikan variabel untuk pengumpulan data
+    name = request.form['name']
+
+    # Anda dapat menyimpan data Anda atau mengirimkannya melalui email
+    return render_template('form_result.html', 
+                           # Tempatkan variabel di sini
+                           name=name,
+                           )
+
 app.run(debug=True)
